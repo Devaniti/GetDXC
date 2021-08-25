@@ -7,7 +7,7 @@ if ($args.count -lt 1)
 New-Item -ItemType Directory -Force -Path $SaveFolder
 
 $JSONURL = "https://api.github.com/repos/microsoft/DirectXShaderCompiler/releases/latest"
-$JSON = Invoke-WebRequest -Uri $JSONURL
+$JSON = Invoke-WebRequest -UseBasicParsing -Uri $JSONURL
 $ParsedJSON = ConvertFrom-Json -InputObject $JSON
 $Assets = Select-Object -InputObject $ParsedJSON -ExpandProperty assets
 Foreach ($Asset IN $Assets)
@@ -16,7 +16,7 @@ Foreach ($Asset IN $Assets)
 	{
 		$DownloadURL = $Asset.browser_download_url
 		$ZIPPath = Join-Path -Path $SaveFolder -ChildPath "dxc.zip"
-		Invoke-WebRequest -Uri $DownloadURL -OutFile $ZIPPath
+		Invoke-WebRequest -UseBasicParsing -Uri $DownloadURL -OutFile $ZIPPath
 		Expand-Archive -Path $ZIPPath -DestinationPath $SaveFolder -Force
 		Remove-Item -Path $ZIPPath
 		Write-Host "Sucessfully downloaded DXC $($Asset.name)"
